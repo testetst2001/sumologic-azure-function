@@ -1,0 +1,77 @@
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version of the packages to produce
+        required: true
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build project # This would actually build your project, using zip for an example artifact
+        run: |
+          cd BlockBlobReader/target/consumer_build/;
+          zip -r BlockBlobReaderConsumer.zip ./* ;
+          cd -;
+          
+          cd BlockBlobReader/target/dlqprocessor_build/;
+          zip -r BlockBlobReaderDLQProcessor.zip ./* ;
+          cd -;
+          
+          cd BlockBlobReader/target/producer_build/;
+          zip -r BlockBlobReaderProducer.zip ./* ;
+          cd -;
+          
+      - name: Create Tag
+        uses: negz/create-tag@v1
+        with:
+          version: v${{ github.event.inputs.version }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_name: Release ${{ github.event.inputs.version }}
+          draft: false
+          prerelease: false
+          tag_name: v${{ github.event.inputs.version }}
+
+      - name: Upload Release Asset - BlockBlobReaderConsumer.zip
+        id: upload-release-asset-consumer 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./BlockBlobReader/target/consumer_build/BlockBlobReaderConsumer.zip
+          asset_name: BlockBlobReaderConsumer.zip
+          asset_content_type: application/zip
+          
+      - name: Upload Release Asset - BlockBlobReaderDLQProcessor.zip
+        id: upload-release-asset-dlqprocessor 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./BlockBlobReader/target/dlqprocessor_build/BlockBlobReaderDLQProcessor.zip
+          asset_name: BlockBlobReaderDLQProcessor.zip
+          asset_content_type: application/zip
+
+      - name: Upload Release Asset - BlockBlobReaderProducer.zip
+        id: upload-release-asset-producer
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./BlockBlobReader/target/producer_build/BlockBlobReaderProducer.zip
+          asset_name: BlockBlobReaderProducer.zip
+          asset_content_type: application/zip
