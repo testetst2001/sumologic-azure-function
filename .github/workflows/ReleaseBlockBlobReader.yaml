@@ -1,0 +1,134 @@
+env:
+  MAJOR_VERSION: 0
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  calculate_version:
+      name: Calculate version
+      runs-on: ubuntu-latest
+      outputs:
+        full_version: ${{ steps.version_setter.outputs.full_version }}
+        version: ${{ steps.version_setter.outputs.version }}
+        branch: ${{ steps.version_setter.outputs.branch }}
+      steps:
+        - id: version_setter
+          run: |
+            # This gets the name of the current Git branch. 
+            BRANCH="${{ github.ref_name }}"
+            # Sometimes the branch will be a full path, e.g. 'john/mybranch'. 
+            # If so we'll base our logic just on the last part.
+            BRANCH=${BRANCH##*/}
+            # Filter out illegal characters, replace with '-'
+            BRANCH=$(echo $BRANCH | tr '[:punct:]' _)
+            echo "Branch: $BRANCH"
+            echo "::set-output name=branch::$BRANCH"
+            VERSION="$MAJOR_VERSION.${{ github.run_number }}.0"
+            echo "::set-output name=version::$VERSION"
+            if [[ "$BRANCH" != "main" && "$BRANCH" != "master" && "$BRANCH" != "octopus" ]]; then
+              VERSION="$VERSION-$BRANCH"
+            fi
+            echo "Build number: $VERSION" >> $GITHUB_STEP_SUMMARY
+            echo "::set-output name=full_version::$VERSION"
+
+  build:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: calculate_version
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          cache: 'npm'
+          node-version: 16
+          cache-dependency-path: BlockBlobReader/src/package-lock.json
+          
+      - name: Build and Create Packages
+        run: |
+          cd BlockBlobReader/src
+          
+          echo "Installing npm modules..."
+          npm install
+          echo "Running npm build..."
+          npm run build
+
+          echo "Preparing target_zip directory..."
+          rm -rf ../target_zip
+          cp -r ../target ../target_zip
+
+          echo "Copying node_modules for consumer_build..."
+          cp -r node_modules ../target_zip/consumer_build/BlobTaskConsumer
+          echo "Copying node_modules for dlqprocessor_build..."
+          cp -r node_modules ../target_zip/dlqprocessor_build/DLQTaskConsumer
+          echo "Copying node_modules for producer_build..."
+          cp -r node_modules ../target_zip/producer_build/BlobTaskProducer
+
+          cd ../target_zip
+
+          rm -f .DS_Store
+
+          echo "Creating consumer_build zip package..."
+          cd consumer_build;
+          zip -r ../BlockBlobReaderConsumer.zip ./* ;
+          cd ..;
+
+          echo "Creating dlqprocessor_build zip package..."
+          cd dlqprocessor_build;
+          zip -r ../BlockBlobReaderDLQProcessor.zip ./* ;
+          cd ..;
+
+          echo "Creating producer_build zip package..."
+          cd producer_build;
+          zip -r ../BlockBlobReaderProducer.zip ./* ;
+          cd ..;
+          
+      - name: Create Tag
+        uses: negz/create-tag@v1
+        with:
+          version: v${{ needs.calculate_version.outputs.full_version }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_name: Release ${{ needs.calculate_version.outputs.full_version }}
+          draft: false
+          prerelease: false
+          tag_name: v${{ needs.calculate_version.outputs.full_version }}
+
+      - name: Upload Release Asset - BlockBlobReaderConsumer.zip
+        id: upload-release-asset-consumer 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} 
+          asset_path: ./BlockBlobReader/target_zip/BlockBlobReaderConsumer.zip
+          asset_name: BlockBlobReaderConsumer.zip
+          asset_content_type: application/zip
+          
+      - name: Upload Release Asset - BlockBlobReaderDLQProcessor.zip
+        id: upload-release-asset-dlqprocessor 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} 
+          asset_path: ./BlockBlobReader/target_zip/BlockBlobReaderDLQProcessor.zip
+          asset_name: BlockBlobReaderDLQProcessor.zip
+          asset_content_type: application/zip
+
+      - name: Upload Release Asset - BlockBlobReaderProducer.zip
+        id: upload-release-asset-producer
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} 
+          asset_path: ./BlockBlobReader/target_zip/BlockBlobReaderProducer.zip
+          asset_name: BlockBlobReaderProducer.zip
+          asset_content_type: application/zip
