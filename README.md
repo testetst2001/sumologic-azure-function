@@ -1,3 +1,7 @@
+Forked due to the issues identified [here](https://octopusdeploy.slack.com/archives/C02DRAT24P6/p1671068526713649)
+--
+
+
 Sumo Logic Azure Functions [![Build Status](https://travis-ci.org/SumoLogic/sumologic-azure-function.svg?branch=master)](https://travis-ci.org/SumoLogic/sumologic-azure-function)
 ==============================
 
