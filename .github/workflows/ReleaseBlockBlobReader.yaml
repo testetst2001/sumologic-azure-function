@@ -46,23 +46,30 @@ jobs:
           
       - name: Build and Create Packages
         run: |
-          cd BlockBlobReader/src
+          cd BlockBlobReader/target
           
-          echo "Installing npm modules..."
+          echo "Installing npm modules for BlobTaskConsumer..."
+          cd consumer_build
           npm install
+          cd ..
+
+          echo "Installing npm modules for DLQConsumer..."
+          cd dlqprocessor_build
+          npm install
+          cd ..
+
+          echo "Installing npm modules for BlobTaskConsumer..."
+          cd producer_build
+          npm install
+          cd ..
+
+          cd ../src
           echo "Running npm build..."
           npm run build
 
           echo "Preparing target_zip directory..."
           rm -rf ../target_zip
           cp -r ../target ../target_zip
-
-          echo "Copying node_modules for consumer_build..."
-          cp -r node_modules ../target_zip/consumer_build/BlobTaskConsumer
-          echo "Copying node_modules for dlqprocessor_build..."
-          cp -r node_modules ../target_zip/dlqprocessor_build/DLQTaskConsumer
-          echo "Copying node_modules for producer_build..."
-          cp -r node_modules ../target_zip/producer_build/BlobTaskProducer
 
           cd ../target_zip
 
