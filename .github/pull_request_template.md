@@ -22,6 +22,6 @@ Quality :heavy_check_mark:
 
 # Pre-requisites
 - [ ] I have referenced this pre-release build of sumo-azure-function in a [CloudPortal branch for E2E tests](https://github.com/OctopusDeploy/CloudPortal/blob/brad/zipnsg2/source/CloudPortal.Core/Azure/Resources/SumoNsgFlowLogsBlobReaderTemplate.json#L289) (All 3 Azure Function Package URLs)
-- [ ] I understand the process for rolling out new Sumo Azure Functions for NSG Glow Logs
+- [ ] I understand the process for rolling out new Sumo Azure Functions for NSG Flow Logs
 - [ ] Are you adding a new dependency?
    - [ ] Ensure the dependency will be detected by Renovate or document it as an [exception in Dependency Management](https://github.com/OctopusDeploy/hosted-docs/blob/master/dependency-management/README.md#dependencies-exempt-from-automatic-updates)
