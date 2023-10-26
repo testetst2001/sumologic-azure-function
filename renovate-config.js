@@ -4,6 +4,7 @@ module.exports = {
         "group:monorepos",
         "group:recommended"
     ],
+    forkProcessing: "enabled",
     baseBranches: ["brad/reno"],
     branchPrefixOld: "renovate/",
     branchPrefix: "renovate/",
