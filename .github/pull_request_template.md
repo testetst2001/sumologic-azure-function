@@ -21,7 +21,8 @@ Quality :heavy_check_mark:
 <!-- Describe focus areas (if any): Review tests/ Exploratory testing/ Smoke testing? -->
 
 # Pre-requisites
-- [ ] I have referenced this pre-release build of sumo-azure-function in a [CloudPortal branch for E2E tests](https://github.com/OctopusDeploy/CloudPortal/blob/brad/zipnsg2/source/CloudPortal.Core/Azure/Resources/SumoNsgFlowLogsBlobReaderTemplate.json#L289) (All 3 Azure Function Package URLs)
+- [ ] I have referenced this pre-release build of sumo-azure-function in a [CloudPortal branch for E2E tests](https://github.com/OctopusDeploy/CloudPortal/blob/fc28bd00c8a062168d65c91f4f58f4147c09c344/source/CloudPortal.Core/SumoLogic/NsgFlowLogs/Resources/SumoNsgFlowLogsBlobReaderTemplate.json#L365) (All 3 Azure Function Package URLs)
+- [ ] I have referenced this pre-release build of sumo-azure-function in a [Dynamic Workers branch for E2E tests](https://github.com/OctopusDeploy/DynamicWorkers/blob/6f824f5e02fd1c38fb616d82761fbabef2be0ed8/source/Cli/SumoLogic/Resources/SumoNsgFlowLogsBlobReaderTemplate.json#L365) (All 3 Azure Function Package URLs)
 - [ ] I understand the process for rolling out new Sumo Azure Functions for NSG Flow Logs
 - [ ] Are you adding a new dependency?
    - [ ] Ensure the dependency will be detected by Renovate or document it as an [exception in Dependency Management](https://github.com/OctopusDeploy/hosted-docs/blob/master/dependency-management/README.md#dependencies-exempt-from-automatic-updates)
