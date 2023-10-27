@@ -21,7 +21,7 @@ jobs:
             # If so we'll base our logic just on the last part.
             BRANCH=${BRANCH##*/}
             # Filter out illegal characters, replace with '-'
-            BRANCH=$(echo $BRANCH | tr '[:punct:]' _)
+            BRANCH=$(echo $BRANCH | tr '[:punct:]' -)
             echo "Branch: $BRANCH"
             echo "::set-output name=branch::$BRANCH"
             VERSION="$MAJOR_VERSION.${{ github.run_number }}.0"
