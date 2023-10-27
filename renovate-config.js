@@ -5,7 +5,6 @@ module.exports = {
         "group:recommended"
     ],
     includeForks: true,
-    baseBranches: ["brad/reno"],
     branchPrefixOld: "renovate/",
     branchPrefix: "renovate/",
     platform: "github",
