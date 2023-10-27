@@ -1,10 +1,12 @@
+> [!IMPORTANT]  
+> Please ensure that you are basing this PR on the `OctopusDeploy/sumologic-azure-function` `octopus` branch and not `master` from the [source Sumo repo](SumoLogic/sumologic-azure-function).
+
 # Background
 <!-- Why does this PR exist? Give a non-technical summary so people outside of engineering can have a good summary -->
 
 # Results
 ## Technical details
 <!-- Describe the result of the change including a link to any trello cards / docs. -->
-https://trello.com/c/xigaq7iY/143-make-a-pr-template
 
 
 <!-- Consider adding a before/after log excerpt or screen capture. -->
