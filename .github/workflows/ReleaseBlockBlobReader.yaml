@@ -1,9 +1,6 @@
 env:
   MAJOR_VERSION: 2
 on:
-  push:
-    branches:
-      - octopus
   pull_request:
     branches:
       - octopus
