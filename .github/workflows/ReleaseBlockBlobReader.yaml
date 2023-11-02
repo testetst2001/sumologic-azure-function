@@ -1,7 +1,9 @@
 env:
   MAJOR_VERSION: 2
 on:
-  push:
+  pull_request:
+    branches:
+      - octopus
   workflow_dispatch:
 
 jobs:

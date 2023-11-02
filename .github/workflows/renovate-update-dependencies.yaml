@@ -11,6 +11,8 @@ on:
       - main
       - master
       - octopus
+      - 'dependabot/**'
+
   workflow_dispatch:
 
 jobs:
