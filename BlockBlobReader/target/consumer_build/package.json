@@ -2,7 +2,7 @@
   "dependencies": {
     "@azure/abort-controller": "^1.1.0",
     "@azure/arm-storage": "^18.2.0",
-    "@azure/identity": "^3.3.2",
+    "@azure/identity": "^4.2.1",
     "@azure/service-bus": "^7.9.2",
     "@azure/storage-blob": "^12.16.0",
     "encoding": "^0.1.13"
